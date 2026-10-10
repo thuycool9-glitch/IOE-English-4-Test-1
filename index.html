@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IOE TEST 1 – ENGLISH CHAMPIONS</title>
+<style>
+:root{
+  --blue:#3b82f6; --blue-d:#1d4ed8; --purple:#8b5cf6; --purple-l:#ede9fe;
+  --yellow:#facc15; --yellow-d:#eab308; --green:#22c55e; --green-d:#15803d;
+  --red:#ef4444; --red-d:#b91c1c; --ink:#1e293b; --white:#fff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Trebuchet MS","Segoe UI",Verdana,Arial,sans-serif;
+  color:var(--ink);
+  background:linear-gradient(160deg,#bfdbfe 0%,#ddd6fe 55%,#fef9c3 100%);
+  min-height:100vh; overflow-x:hidden;
+}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg span{position:absolute;font-size:34px;opacity:.35;animation:floaty 9s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-18px) rotate(8deg)}}
+.app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:16px}
+header.title{text-align:center;margin:8px 0 14px}
+header.title h1{
+  margin:0;font-size:clamp(24px,5.5vw,44px);letter-spacing:1px;color:var(--blue-d);
+  text-shadow:3px 3px 0 var(--yellow);
+}
+header.title p{margin:4px 0 0;font-size:clamp(14px,2.6vw,19px);color:#6d28d9;font-weight:bold}
+.card{
+  background:var(--white);border-radius:28px;padding:clamp(16px,3.5vw,30px);
+  box-shadow:0 10px 0 rgba(99,102,241,.18),0 14px 30px rgba(30,41,59,.15);
+  animation:pop .35s ease;
+}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.hidden{display:none !important}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:4px solid #f59e0b;outline-offset:2px}
+.btn{
+  border:none;border-radius:999px;padding:14px 28px;font-size:clamp(16px,3vw,20px);font-weight:bold;
+  color:#fff;background:var(--blue);box-shadow:0 6px 0 var(--blue-d);transition:transform .1s;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--blue-d)}
+.btn.green{background:var(--green);box-shadow:0 6px 0 var(--green-d)}
+.btn.yellow{background:var(--yellow);color:#422006;box-shadow:0 6px 0 var(--yellow-d)}
+.btn.purple{background:var(--purple);box-shadow:0 6px 0 #6d28d9}
+.btn.red{background:var(--red);box-shadow:0 6px 0 var(--red-d)}
+.btn.small{padding:8px 16px;font-size:15px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.btn.ghost{background:#e2e8f0;color:var(--ink);box-shadow:0 4px 0 #94a3b8}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+
+/* start */
+.hero{text-align:center}
+.hero .art{font-size:clamp(46px,12vw,82px);line-height:1.1;margin:6px 0}
+.pill{display:inline-block;background:var(--purple-l);color:#5b21b6;border-radius:999px;padding:6px 16px;font-weight:bold;margin:4px}
+.rules{text-align:left;background:#f0f9ff;border-radius:18px;padding:12px 22px;margin:14px auto;max-width:560px}
+.rules li{margin:4px 0;font-size:17px}
+.namebox{margin:10px 0}
+.namebox input{font-size:19px;padding:12px 18px;border-radius:16px;border:3px solid #c4b5fd;width:min(100%,340px);text-align:center;font-family:inherit}
+.optline{margin:10px 0;font-size:16px}
+.optline input{width:20px;height:20px;vertical-align:middle}
+
+/* HUD */
+.hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:10px}
+.hud div{background:#fff;border-radius:16px;padding:8px 10px;text-align:center;box-shadow:0 3px 0 rgba(99,102,241,.2);font-weight:bold;font-size:15px}
+.hud small{display:block;font-weight:normal;color:#64748b;font-size:12px}
+.hud b{font-size:20px;color:var(--blue-d)}
+.progress{height:20px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-bottom:12px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--yellow));transition:width .4s}
+.toolbar{display:flex;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+
+/* question */
+.qhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.badge{background:var(--purple-l);color:#5b21b6;border-radius:999px;padding:5px 14px;font-weight:bold;font-size:14px}
+.qnum{font-weight:bold;color:#64748b}
+.timer{font-weight:bold;color:var(--red-d);font-size:20px}
+.qtext{font-size:clamp(21px,4.6vw,32px);font-weight:bold;line-height:1.35;margin:10px 0 14px}
+.blank{display:inline-block;min-width:70px;border-bottom:5px solid var(--yellow-d);background:#fef9c3;border-radius:8px;text-align:center;color:#a16207;margin:0 4px}
+.pic{font-size:clamp(54px,14vw,90px);text-align:center;margin:6px 0}
+.notice{background:#fef3c7;border:3px dashed var(--yellow-d);border-radius:16px;padding:10px 14px;margin:8px 0;font-size:16px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.options{grid-template-columns:1fr}}
+.opt{
+  display:flex;align-items:center;gap:12px;text-align:left;border:4px solid #c7d2fe;background:#eef2ff;
+  border-radius:20px;padding:12px 14px;font-size:clamp(17px,3.4vw,22px);font-weight:bold;color:var(--ink);
+  transition:transform .1s,background .2s;min-height:64px;
+}
+.opt:hover:not(:disabled){transform:scale(1.02);background:#e0e7ff}
+.opt .let{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center}
+.opt.correct{background:#dcfce7;border-color:var(--green);animation:bounce .5s}
+.opt.correct .let{background:var(--green)}
+.opt.wrong{background:#fee2e2;border-color:var(--red);animation:shake .4s}
+.opt.wrong .let{background:var(--red)}
+.opt:disabled{cursor:default}
+.opt.dim{opacity:.55}
+.mark{margin-left:auto;font-size:26px}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.feedback{margin-top:14px;border-radius:20px;padding:12px 16px;font-size:18px}
+.feedback.ok{background:#dcfce7;border:3px solid var(--green)}
+.feedback.bad{background:#fee2e2;border:3px solid var(--red)}
+.feedback.info{background:#fef3c7;border:3px solid var(--yellow-d)}
+.feedback h3{margin:0 0 4px;font-size:22px}
+.actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+
+/* results */
+.res h2{text-align:center;font-size:clamp(26px,6vw,40px);margin:4px 0;color:var(--purple)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}
+.grid div{background:#f0f9ff;border-radius:18px;padding:10px;text-align:center;font-weight:bold}
+.grid b{display:block;font-size:26px;color:var(--blue-d)}
+.badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.bdg{background:#fef9c3;border:3px solid var(--yellow-d);border-radius:18px;padding:8px 14px;font-weight:bold;text-align:center}
+.bdg.locked{background:#f1f5f9;border-color:#cbd5e1;color:#94a3b8;filter:grayscale(1)}
+.msg{text-align:center;font-size:20px;font-weight:bold;margin:8px 0}
+
+/* review */
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.filters .btn.active{background:var(--purple);box-shadow:0 4px 0 #6d28d9;color:#fff}
+.ritem{border:3px solid #e2e8f0;border-radius:18px;padding:12px;margin:10px 0;background:#fff}
+.ritem.st-wrong{border-color:var(--red)}
+.ritem.st-skipped{border-color:var(--yellow-d)}
+.ritem.st-pending{border-color:#94a3b8;background:#f8fafc}
+.ritem.st-correct{border-color:var(--green)}
+.ritem .qt{font-weight:bold;font-size:18px;margin:4px 0}
+.tag{display:inline-block;border-radius:999px;padding:2px 12px;font-size:13px;font-weight:bold;color:#fff;margin-right:6px}
+.tag.correct{background:var(--green)}.tag.wrong{background:var(--red)}.tag.skipped{background:var(--yellow-d);color:#422006}.tag.pending{background:#64748b}
+.small-note{font-size:14px;color:#475569;margin-top:6px}
+
+/* overlay / modal */
+.overlay{position:fixed;inset:0;background:rgba(30,41,59,.6);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:26px;padding:24px;max-width:440px;width:100%;text-align:center;font-size:19px}
+.modal h3{margin:0 0 8px;font-size:26px}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--purple);color:#fff;padding:12px 22px;border-radius:999px;font-weight:bold;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.3);animation:pop .3s;max-width:92vw;text-align:center}
+.confetti{position:fixed;top:-20px;z-index:40;font-size:26px;pointer-events:none;animation:fall 1.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true">
+  <span style="left:5%;top:8%">⭐</span><span style="left:85%;top:6%;animation-delay:1s">☁️</span>
+  <span style="left:12%;top:70%;animation-delay:2s">📚</span><span style="left:90%;top:60%;animation-delay:.5s">✏️</span>
+  <span style="left:48%;top:92%;animation-delay:3s">⭐</span><span style="left:70%;top:30%;animation-delay:2.5s">🌟</span>
+  <span style="left:25%;top:35%;animation-delay:1.5s">☁️</span><span style="left:3%;top:45%;animation-delay:4s">🎒</span>
+</div>
+
+<div class="app">
+  <header class="title">
+    <h1>IOE TEST 1 – ENGLISH CHAMPIONS</h1>
+    <p>Learn English. Play Smart. Be a Champion!</p>
+  </header>
+
+  <!-- START -->
+  <section id="screen-start" class="card hero">
+    <div class="art" aria-hidden="true">🧒📚⭐🏆</div>
+    <div><span class="pill">100 questions</span><span class="pill">Tiếng Anh lớp 4</span></div>
+    <div class="namebox">
+      <label for="nameInput"><b>Your name / Tên của em (không bắt buộc)</b></label><br>
+      <input id="nameInput" type="text" maxlength="30" placeholder="Type your name" autocomplete="off">
+    </div>
+    <ul class="rules">
+      <li>👀 Đọc kỹ câu hỏi.</li>
+      <li>👆 Chọn một đáp án (hoặc bấm phím A, B, C, D).</li>
+      <li>⭐ Mỗi câu đúng được cộng 10 điểm.</li>
+      <li>🏁 Hoàn thành 100 câu để xem kết quả.</li>
+    </ul>
+    <div class="optline"><label><input type="checkbox" id="quickToggle"> ⏱️ Quick Challenge (30 giây cho các câu ngắn)</label></div>
+    <div class="row">
+      <button class="btn green hidden" id="btnContinue">▶ CONTINUE</button>
+      <button class="btn yellow" id="btnStart">START GAME</button>
+      <button class="btn ghost small" id="btnTeacher">👩‍🏫 Teacher check list</button>
+    </div>
+    <p class="small-note" id="startInfo"></p>
+  </section>
+
+  <!-- TEACHER LIST -->
+  <section id="screen-teacher" class="card hidden">
+    <h2>👩‍🏫 Danh sách câu giáo viên cần kiểm tra</h2>
+    <p class="small-note">Các câu có <b>correctAnswer: null</b> trong mảng <code>QUESTIONS</code> chưa có dữ liệu (đoạn nghe, tranh hoặc bài đọc không có trong PDF) nên trò chơi không chấm điểm và không đoán đáp án. Khi có dữ liệu, chỉ cần điền đáp án vào <code>correctAnswer</code> (đúng nguyên văn một phương án) là câu đó tự động được chấm.</p>
+    <div id="teacherList"></div>
+    <div class="row"><button class="btn" id="btnTeacherBack">⬅ Back</button></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="hidden">
+    <div class="toolbar">
+      <button class="btn ghost small" id="btnHome">🏠 Home</button>
+      <button class="btn ghost small" id="btnPause">⏸ Pause</button>
+    </div>
+    <div class="hud" aria-live="polite">
+      <div><small>Question</small><b id="hQ">1/100</b></div>
+      <div><small>Score</small><b id="hScore">0/1000</b></div>
+      <div><small>Correct ✓</small><b id="hCorrect">0</b></div>
+      <div><small>Wrong ✗</small><b id="hWrong">0</b></div>
+      <div><small>Skipped</small><b id="hSkip">0</b></div>
+      <div><small>Accuracy</small><b id="hAcc">–</b></div>
+    </div>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="progWrap"><i id="progBar"></i></div>
+    <div class="card" id="qcard">
+      <div class="qhead">
+        <span class="badge" id="qType"></span>
+        <span class="qnum" id="qSource"></span>
+        <span class="timer hidden" id="qTimer">⏱ 30</span>
+      </div>
+      <div class="pic hidden" id="qPic" aria-hidden="true"></div>
+      <div class="qtext" id="qText"></div>
+      <div class="notice hidden" id="qNotice"></div>
+      <div class="options" id="qOptions"></div>
+      <div class="feedback hidden" id="qFeedback" role="status"></div>
+      <div class="actions">
+        <button class="btn ghost small" id="btnSkip">⏭ Skip</button>
+        <button class="btn green hidden" id="btnNext">NEXT QUESTION ➜</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-result" class="card res hidden">
+    <h2>🎉 Game Complete!</h2>
+    <div class="msg" id="rName"></div>
+    <div class="msg" id="rMsg"></div>
+    <div class="grid" id="rGrid"></div>
+    <h3 style="text-align:center">🏅 Badges</h3>
+    <div class="badges" id="rBadges"></div>
+    <p class="small-note" id="rNote"></p>
+    <div class="row">
+      <button class="btn purple" id="btnReview">🔍 REVIEW MISTAKES</button>
+      <button class="btn green" id="btnAgain">🔁 PLAY AGAIN</button>
+      <button class="btn red" id="btnRestart">♻ RESTART QUIZ</button>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section id="screen-review" class="card hidden">
+    <h2 style="text-align:center">🔍 Review</h2>
+    <div class="filters" id="filters">
+      <button class="btn small active" data-f="all">All</button>
+      <button class="btn small" data-f="wrong">Wrong</button>
+      <button class="btn small" data-f="skipped">Skipped</button>
+      <button class="btn small" data-f="pending">Need data</button>
+    </div>
+    <div id="reviewList"></div>
+    <div class="row"><button class="btn" id="btnReviewBack">⬅ Back to results</button></div>
+  </section>
+</div>
+
+<div class="overlay hidden" id="pauseOverlay"><div class="modal"><h3>⏸ Paused</h3><p>Trò chơi đang tạm dừng.</p><button class="btn green" id="btnResume">▶ RESUME</button></div></div>
+<div class="overlay hidden" id="confirmOverlay" role="dialog" aria-modal="true"><div class="modal"><h3 id="cTitle">Are you sure?</h3><p id="cText"></p><div class="row"><button class="btn red" id="cYes">Yes</button><button class="btn ghost" id="cNo">No</button></div></div></div>
+
+<!-- ============ DATA: 100 câu đầu của "1. Đề 1.pdf" (Câu 1-100) ============
+ Quy ước: correctAnswer = nguyên văn phương án đúng (không phụ thuộc vị trí A/B/C/D).
+ correctAnswer: null = câu cần dữ liệu không có trong PDF (đoạn nghe/tranh/bài đọc) hoặc mơ hồ -> KHÔNG chấm điểm.
+ Đề gốc không có đáp án; đáp án dưới đây do kiểm tra theo kiến thức tiếng Anh. -->
+<script>
+function Q(id,type,question,options,correctAnswer,explanation,image,teacherNote){
+  return {id:id,type:type,question:question,options:options,correctAnswer:correctAnswer,
+          explanation:explanation,image:image||"",source:"Câu "+id+" (PDF)",teacherNote:teacherNote||""};
+}
+var NEED="Câu này cần đoạn nghe/tranh/bài đọc không có trong PDF; chưa chấm điểm. Điền correctAnswer khi có dữ liệu.";
+var YN=["Yes","No","Maybe","Never"];
+var QUESTIONS=[
+Q(1,"grammar","___ she like cats? (Pick the best option.)",["Does","Is","Are","Do"],"Does","Với she/he/it, câu hỏi dùng Does + like."),
+Q(2,"grammar","He has worked here ___ ten years. (Choose one.)",["during","for","since","ago"],"for","for + khoảng thời gian (ten years). since + mốc thời gian."),
+Q(3,"grammar","They ___ a cat.",["had","having","has","have"],"have","They đi với have."),
+Q(4,"reading","Why was the family late? (Choose one.)",["there was no school","they overslept","the bus was late","the clock stopped working"],null,NEED,"","Thiếu đoạn văn/đoạn nghe về lý do gia đình đến muộn."),
+Q(5,"grammar","Dogs ___ talk. (Choose one.)",["must","can","can't","should"],"can't","Chó không biết nói, nên dùng can't."),
+Q(6,"vocabulary","Is 'deforestation' related to the environment?",["Yes","Never","No","Maybe"],"Yes","Deforestation (phá rừng) liên quan đến môi trường.","🌳"),
+Q(7,"yesno","Is a 'boat' a way of travelling? (Select one.)",["Never","Maybe","No","Yes"],"Yes","Boat (thuyền) là một phương tiện đi lại.","⛵"),
+Q(8,"vocabulary","Choose the correct answer: What is the antonym (opposite) of 'safe'?",["late","dangerous","weak","slow"],"dangerous","Safe (an toàn) trái nghĩa với dangerous (nguy hiểm)."),
+Q(9,"grammar","___ books here are ours. (Choose one.)",["These","That","This","Those"],"These","Books là số nhiều và ở gần (here) nên dùng These."),
+Q(10,"vocabulary","Where do you save money?",["train station","cinema","museum","bank"],"bank","Ta gửi tiền ở bank (ngân hàng)."),
+Q(11,"grammar","What is the superlative of 'big'? (Choose one.)",["more big","biger","the biggest","most big"],"the biggest","Từ ngắn: gấp đôi phụ âm + est → the biggest."),
+Q(12,"reading","Why was the family late?",["the clock stopped working","they overslept","the bus was late","there was no school"],null,NEED,"","Thiếu đoạn văn/đoạn nghe. Trùng nội dung với Câu 4 (thứ tự phương án khác)."),
+Q(13,"grammar","What is the past tense of 'take'? (Choose one.)",["taket","taked","took","takeed"],"took","Take là động từ bất quy tắc: take → took."),
+Q(14,"yesno","Is a 'beans' a food item? (Choose one.)",["Maybe","No","Never","Yes"],"Yes","Beans (đậu) là thức ăn.","🫘"),
+Q(15,"grammar","She ___ two dogs. (Choose one.)",["has","having","had","have"],"has","She đi với has."),
+Q(16,"reading","When is the gym full?",["Monday evenings","Sunday nights","Saturday mornings","every afternoon"],null,NEED,"","Thiếu đoạn văn/đoạn nghe về phòng tập."),
+Q(17,"vocabulary","Moving your body to music is called ___. (Choose one.)",["stargazing","dancing","coding","pottery"],"dancing","Di chuyển cơ thể theo nhạc là dancing (nhảy múa)."),
+Q(18,"grammar","Answer correctly: Is 'milk' uncountable?",["Yes, it is countable","Both","Neither","Yes, it is uncountable"],"Yes, it is uncountable","Milk là danh từ không đếm được."),
+Q(19,"grammar","What is the adverb form of 'quiet'? (Select one.)",["quieter","quiet","quietly","quietness"],"quietly","Tính từ + ly → trạng từ: quiet → quietly."),
+Q(20,"reading","How long has Daniel been sick?",["two days","one day","three days","a week"],null,NEED,"","Thiếu đoạn văn/đoạn nghe về Daniel."),
+Q(21,"grammar","Choose the correct answer: This is the town ___ I was born.",["which","where","that","who"],"where","Where chỉ nơi chốn: the town where I was born."),
+Q(22,"grammar","Choose the correct answer: I have ___ heard that song before. It is beautiful.",["yet","since","never","already"],"never","I have never heard ... before = Em chưa từng nghe bài hát này.","","Cũng có thể chấp nhận 'already' nếu giáo viên xem 'It is beautiful' là nhận xét sau khi nghe; 'never ... before' là cách dùng tự nhiên nhất."),
+Q(23,"reading","How many sisters does Peter have? (Select one.)",["four","eleven","eighteen","two"],null,NEED,"","Thiếu đoạn văn/tranh về Peter."),
+Q(24,"grammar","___ old are you? (Choose one.)",["When","Who","What","How"],"How","Hỏi tuổi: How old are you?"),
+Q(25,"grammar","We ___ happy today.",["am","be","are","is"],"are","We đi với are."),
+Q(26,"grammar","What is the plural of 'baby'?",["babyies","babyes","babies","babys"],"babies","Danh từ tận cùng phụ âm + y → bỏ y, thêm ies."),
+Q(27,"grammar","What is the plural of 'bench'? (Choose one.)",["always","benches","benchies","benchs"],"benches","Danh từ tận cùng ch thêm es: benches."),
+Q(28,"fill","Fill in: We ___ (already/see) that movie.",["have already seen","saw already","are seeing","already saw"],"have already seen","Hiện tại hoàn thành: have + already + seen."),
+Q(29,"vocabulary","Is 'coral reef' related to the environment?",["No","Never","Yes","Maybe"],"Yes","Coral reef (rạn san hô) là một phần của môi trường biển.","🪸"),
+Q(30,"grammar","Mary is a girl. (Choose one.)",["They","She","He","It"],"She","Mary là bé gái → She."),
+Q(31,"grammar","I ___ at home now.",["am","be","is","are"],"am","I đi với am."),
+Q(32,"yesno","Is a 'sweater' something you wear?",["Maybe","No","Yes","Never"],"Yes","Sweater (áo len) là quần áo.","🧥"),
+Q(33,"general","What can you find in the museum? (Choose one.)",["only paintings","sports equipment","paintings, ancient tools, and dinosaur bones","books and computers"],"paintings, ancient tools, and dinosaur bones","Bảo tàng trưng bày tranh, dụng cụ cổ và hóa thạch.","","Có thể dựa vào đoạn văn gốc; đáp án chọn theo kiến thức chung."),
+Q(34,"vocabulary","Pain in your stomach is called a ___. (Choose one.)",["rest","stomachache","prescription","toothache"],"stomachache","Stomach + ache = đau bụng."),
+Q(35,"general","What color is a lake? (Choose one.)",["pink","gray","yellow","blue"],"blue","Hồ thường có màu xanh dương.","","Có thể dựa vào tranh gốc; đáp án chọn theo kiến thức chung."),
+Q(36,"grammar","Choose the correct answer: She ___ go to school yesterday. (negative)",["wasn't","hadn't","don't","didn't"],"didn't","Quá khứ phủ định: didn't + động từ nguyên mẫu."),
+Q(37,"grammar","Look at those clouds! It ___ rain!? (Select one.)",["will","might","shall","is going to"],"is going to","Có dấu hiệu rõ ràng (mây đen) → is going to."),
+Q(38,"grammar","What is the adjective form of 'wonder'?",["wonderful","small","wonderness","wonderless"],"wonderful","Wonder + ful = wonderful (tuyệt vời)."),
+Q(39,"grammar","It ___ a cat? (Select one.)",["had","have","having","has"],"has","It đi với has.","","Câu gốc có dấu '?' nhưng cấu trúc là 'It has a cat'."),
+Q(40,"grammar","___ sand do you have?",["How often","How long","How much","How many"],"How much","Sand không đếm được → How much."),
+Q(41,"general","Choose the correct answer: Which month comes after October?",["August","November","March","July"],"November","Sau October là November."),
+Q(42,"grammar","I think it ___ rain tomorrow? (Select one.)",["shall","will","is going to","would"],"will","I think + will cho dự đoán không có dấu hiệu."),
+Q(43,"vocabulary","If it is raining, the weather is ___.",["cloudy","rainy","snowy","humid"],"rainy","Trời đang mưa → rainy."),
+Q(44,"grammar","Choose the correct answer: ___ old are you?",["Who","When","What","How"],"How","Hỏi tuổi: How old are you?"),
+Q(45,"yesno","Is a 'frog' an animal?",["Maybe","No","Yes","Never"],"Yes","Frog (con ếch) là động vật.","🐸"),
+Q(46,"reading","Where is the library?",["inside the museum","next to the bank","behind the park","next to the school"],null,NEED,"","Thiếu bản đồ/đoạn văn chỉ vị trí thư viện."),
+Q(47,"vocabulary","This transport has two wheels and pedals. (Choose one.)",["bicycle","submarine","boat","car"],"bicycle","Bicycle (xe đạp) có hai bánh và bàn đạp."),
+Q(48,"vocabulary","The process of planting new trees is called ___. (Choose one.)",["reforestation","toxic waste","conservation","solar energy"],"reforestation","Reforestation = trồng lại rừng."),
+Q(49,"vocabulary","Choose the correct answer: What does 'endangered species' mean?",["plants that grow fast","animals and plants at risk of extinction","common animals","animals that migrate"],"animals and plants at risk of extinction","Endangered species = loài có nguy cơ tuyệt chủng."),
+Q(50,"grammar","What is the past tense of 'close'?",["closed","close","closes","closeing"],"closed","Động từ tận cùng e chỉ thêm d: closed."),
+Q(51,"yesno","Choose the correct answer: Is 'journaling' a hobby?",["Never","No","Maybe","Yes"],"Yes","Journaling (viết nhật ký) là một sở thích.","📓"),
+Q(52,"grammar","Is 'butter' uncountable? (Choose one.)",["Yes, it is countable","Both","Neither","Yes, it is uncountable"],"Yes, it is uncountable","Butter (bơ) là danh từ không đếm được."),
+Q(53,"yesno","Is a 'bread' a food item? (Choose one.)",["Never","Yes","Maybe","No"],"Yes","Bread (bánh mì) là thức ăn.","🍞"),
+Q(54,"grammar","Which article is correct? '___ red pen' (Choose one.)",["some","the","a","an"],"a","Red bắt đầu bằng phụ âm → a red pen."),
+Q(55,"reading","Choose the correct answer: What is the dog's name?",["Buddy","Max","Spot","Rex"],null,NEED,"","Thiếu đoạn văn/tranh về tên con chó."),
+Q(56,"grammar","What is the plural of 'dog'? (Choose one.)",["clean","dogies","dogs","doges"],"dogs","Thêm s: dogs."),
+Q(57,"grammar","Choose the correct answer: We ___ at school yesterday.",["was","were","is","are"],"were","Quá khứ của we là were."),
+Q(58,"reading","When does Mark go to school? (Select one.)",["7:30","7:00","7:15","8:00"],null,NEED,"","Thiếu đoạn văn/đồng hồ về giờ đi học của Mark."),
+Q(59,"reading","How many cats are sleeping? (Choose one.)",["two","five","eleven","twelve"],null,NEED,"","Thiếu tranh minh họa."),
+Q(60,"grammar","What is the past tense of 'say'?",["said","sayt","sayd","sayed"],"said","Say là động từ bất quy tắc: say → said."),
+Q(61,"vocabulary","Which adverb shows 0% frequency? (Select one.)",["never","sometimes","always","usually"],"never","Never = 0% (không bao giờ)."),
+Q(62,"yesno","Is 'pottery' a hobby?",["Maybe","No","Yes","Never"],"Yes","Pottery (làm đồ gốm) là một sở thích.","🏺"),
+Q(63,"yesno","Is a 'kite' a toy?",["No","Maybe","Yes","Never"],"Yes","Kite (con diều) là đồ chơi.","🪁"),
+Q(64,"yesno","Is a 'vet' an occupation?",["Maybe","No","Yes","Never"],"Yes","Vet (bác sĩ thú y) là một nghề.","🩺"),
+Q(65,"grammar","___ chairs do you have?",["How many","How much","How often","How long"],"How many","Chairs đếm được số nhiều → How many."),
+Q(66,"fill","Fill in: The shoes are ___ the bed. (below it)",["under","in","next to","on"],"under","Below it = ở bên dưới → under."),
+Q(67,"grammar","Is 'water' uncountable? (Choose one.)",["Both","Neither","Yes, it is countable","Yes, it is uncountable"],"Yes, it is uncountable","Water là danh từ không đếm được."),
+Q(68,"vocabulary","What is a synonym for 'strange'? (Pick the best option.)",["courageous","joyful","unhappy","unusual"],"unusual","Strange (lạ) đồng nghĩa với unusual."),
+Q(69,"grammar","Is 'egg' countable? (Choose one.)",["No, it is uncountable","Yes, it is countable","Both","Neither"],"Yes, it is countable","One egg, two eggs: egg đếm được.","🥚"),
+Q(70,"vocabulary","How do you say the number 8 in English?",["four","sixteen","one","eight"],"eight","8 đọc là eight."),
+Q(71,"vocabulary","How do you say the number 17 in English?",["twenty","ten","seventeen","fourteen"],"seventeen","17 đọc là seventeen."),
+Q(72,"reading","What color is Tom's ball? (Choose one.)",["silver","red","yellow","brown"],null,NEED,"","Thiếu tranh/đoạn văn về quả bóng của Tom."),
+Q(73,"general","Choose the correct answer: What is the ninth month?",["October","September","January","August"],"September","Tháng thứ chín là September."),
+Q(74,"grammar","Is 'furniture' uncountable?",["Both","Yes, it is countable","Neither","Yes, it is uncountable"],"Yes, it is uncountable","Furniture (đồ nội thất) không đếm được."),
+Q(75,"general","Answer correctly: How much of Earth's water is fresh?",["less than 1%","about 3%","50%","70%"],"about 3%","Chỉ khoảng 3% nước trên Trái Đất là nước ngọt.","","Có thể dựa vào bài đọc gốc; đáp án chọn theo kiến thức khoa học chung."),
+Q(76,"general","What color is a night?",["white","black","gray","silver"],"black","Ban đêm tối nên thường là màu black.","","Câu hỏi hơi mơ hồ (có thể là 'dark'); giáo viên xác nhận."),
+Q(77,"vocabulary","What do you call your father's sister? (Choose one.)",["niece","cousin","aunt","sister"],"aunt","Chị/em gái của bố là aunt (cô)."),
+Q(78,"general","What is one benefit of planting more trees? (Select one.)",["more rain","warmer winters","fewer rivers","improved air quality"],"improved air quality","Cây xanh làm sạch không khí.","","Có thể dựa vào bài đọc gốc; đáp án chọn theo kiến thức chung."),
+Q(79,"reading","What do children do on the frozen lake? (Select one.)",["play football","swim","skate","fish"],null,NEED,"","Thiếu đoạn văn/tranh về hồ đóng băng."),
+Q(80,"reading","Answer correctly: How does Mike run?",["quickly","happily","loudly","slowly"],null,NEED,"","Thiếu đoạn văn/tranh về cách Mike chạy."),
+Q(81,"grammar","Choose the correct answer: My sister ___ every morning.",["sing","singing","sang","sings"],"sings","Every morning → hiện tại đơn; my sister + sings."),
+Q(82,"vocabulary","A doctor's written order for medicine is called a ___? (Select one.)",["temperature","toothache","bandage","prescription"],"prescription","Prescription = đơn thuốc."),
+Q(83,"grammar","What is the comparative form of 'tall'?",["most tall","taller","more tall","slowly"],"taller","Tính từ ngắn + er: taller."),
+Q(84,"general","What causes acid rain?",["pollution from factories and cars","too much sunlight","melting snow","heavy wind"],"pollution from factories and cars","Khí thải từ nhà máy và xe cộ gây mưa axit."),
+Q(85,"general","What does the elephant eat? (Select one.)",["leaves and fruit","carrots and cake","milk and bread","fish and eggs"],"leaves and fruit","Voi ăn thực vật: lá và trái cây.","","Có thể dựa vào tranh/bài đọc gốc; đáp án chọn theo kiến thức chung."),
+Q(86,"yesno","Is a 'scientist' an occupation?",["Never","Maybe","Yes","No"],"Yes","Scientist (nhà khoa học) là một nghề.","🔬"),
+Q(87,"general","Which month comes after January?",["February","August","April","July"],"February","Sau January là February."),
+Q(88,"grammar","Choose the correct answer: She ___ play the piano beautifully.",["must","can","can't","should"],"can","Can diễn tả khả năng: She can play."),
+Q(89,"yesno","Is a 'jump rope' a toy? (Choose one.)",["Never","No","Yes","Maybe"],"Yes","Jump rope (dây nhảy) là đồ chơi.","🪢"),
+Q(90,"vocabulary","Where do you go to watch sports?",["stadium","museum","market","bank"],"stadium","Ta xem thể thao ở stadium (sân vận động)."),
+Q(91,"fill","Choose the correct answer: She ___ (finish) her homework.",["is finishing","finished","has finished","finishes"],null,"Câu này có nhiều đáp án hợp lý khi không có thêm ngữ cảnh (thì hiện tại tiếp diễn, quá khứ, hiện tại hoàn thành, hiện tại đơn); chưa chấm điểm.","","MƠ HỒ: thiếu từ chỉ thời gian (yesterday/just/now/every day). Điền correctAnswer sau khi giáo viên xác nhận."),
+Q(92,"grammar","You ___ two dogs. (Pick the best option.)",["had","have","having","has"],"have","You đi với have."),
+Q(93,"general","What would happen without gravity? (Select one.)",["planets would move faster","objects would float away","the Sun would disappear","the moon would fall"],"objects would float away","Không có trọng lực, mọi vật sẽ bay lơ lửng."),
+Q(94,"grammar","Choose the correct answer: What is the past tense of 'know'?",["knowd","knew","knowt","knowed"],"knew","Know là động từ bất quy tắc: know → knew."),
+Q(95,"grammar","Choose the correct answer: Is 'butter' uncountable?",["Yes, it is uncountable","Both","Neither","Yes, it is countable"],"Yes, it is uncountable","Butter không đếm được.","","Trùng nội dung với Câu 52."),
+Q(96,"reading","What does Linda's rabbit eat? (Select one.)",["carrots and lettuce","fish and rice","apples and bananas","milk and bread"],null,NEED,"","Thiếu đoạn văn/tranh về con thỏ của Linda."),
+Q(97,"yesno","Is a 'architect' an occupation? (Choose one.)",["No","Yes","Never","Maybe"],"Yes","Architect (kiến trúc sư) là một nghề.","📐","Câu gốc viết 'a architect' (lỗi mạo từ); giữ nguyên theo PDF."),
+Q(98,"fill","Fill in: He said, 'I am studying.' → He said he ___ studying.",["has been","is","will be","was"],"was","Câu gián tiếp lùi thì: am → was."),
+Q(99,"grammar","What is the plural of 'baby'? (Choose one.)",["babyes","babyies","babys","babies"],"babies","Phụ âm + y → ies: babies.","","Trùng nội dung với Câu 26."),
+Q(100,"vocabulary","Choose the correct answer: 'Today' refers to the ___.",["unknown","present","past","future"],"present","Today = hôm nay = hiện tại (present).")
+];
+</script>
+
+<script>
+(function(){
+"use strict";
+var POINTS=10, SAVE_KEY="ioe_test1_grade4_v1", QUICK_SECONDS=30;
+var TYPE_LABEL={grammar:"📘 Grammar Challenge",vocabulary:"📚 Vocabulary Challenge",yesno:"✅ Yes / No",fill:"✏️ Fill in the Blank",reading:"🎧 Listening / Reading",general:"🧠 Multiple Choice"};
+var QUICK_TYPES={grammar:1,vocabulary:1,yesno:1,general:1};
+var SCORABLE=QUESTIONS.filter(function(q){return q.correctAnswer!==null;});
+var MAX_SCORE=SCORABLE.length*POINTS;
+var TOTAL=QUESTIONS.length;
+var ACHIEVEMENTS=[
+ {pct:0.1,name:"English Explorer",icon:"🧭"},
+ {pct:0.3,name:"Vocabulary Star",icon:"⭐"},
+ {pct:0.5,name:"Grammar Hero",icon:"🦸"},
+ {pct:0.7,name:"Super English Learner",icon:"🚀"},
+ {pct:0.9,name:"IOE Champion",icon:"🏆"}
+];
+var LETTERS=["A","B","C","D"];
+
+var state=null, locked=false, paused=false, quickLeft=0, lastTick=0, reviewFilter="all";
+
+function $(id){return document.getElementById(id);}
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+
+/* ---------- storage (best effort) ---------- */
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){}}
+function loadState(){
+  try{
+    var raw=localStorage.getItem(SAVE_KEY); if(!raw) return null;
+    var s=JSON.parse(raw);
+    if(!s||s.version!==1||!Array.isArray(s.results)||s.results.length!==TOTAL||typeof s.idx!=="number") return null;
+    return s;
+  }catch(e){return null;}
+}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+
+function newState(name,quick){
+  var r=[];for(var i=0;i<TOTAL;i++)r.push(null);
+  return {version:1,name:name||"",quick:!!quick,idx:0,results:r,score:0,elapsed:0};
+}
+
+/* ---------- screens ---------- */
+function showScreen(name){
+  ["start","teacher","quiz","result","review"].forEach(function(n){
+    $("screen-"+n).classList.toggle("hidden",n!==name);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ---------- counts ---------- */
+function counts(){
+  var c={correct:0,wrong:0,skipped:0,pending:0,done:0,scorableDone:0};
+  state.results.forEach(function(r,i){
+    if(!r) return;
+    c.done++;
+    if(r.status==="correct")c.correct++;
+    else if(r.status==="wrong")c.wrong++;
+    else if(r.status==="skipped")c.skipped++;
+    else if(r.status==="pending")c.pending++;
+    if(r.status!=="pending")c.scorableDone++;
+  });
+  return c;
+}
+function updateHud(){
+  var c=counts();
+  $("hQ").textContent=(state.idx+1)+"/"+TOTAL;
+  $("hScore").textContent=state.score+"/"+MAX_SCORE;
+  $("hCorrect").textContent=c.correct;
+  $("hWrong").textContent=c.wrong;
+  $("hSkip").textContent=c.skipped;
+  $("hAcc").textContent=c.scorableDone?Math.round(c.correct/c.scorableDone*100)+"%":"–";
+  var pct=Math.round(c.done/TOTAL*100);
+  $("progBar").style.width=pct+"%";
+  $("progWrap").setAttribute("aria-valuenow",pct);
+}
+
+/* ---------- render question ---------- */
+function fillText(node,text){
+  node.textContent="";
+  var parts=text.split("___");
+  parts.forEach(function(p,i){
+    node.appendChild(document.createTextNode(p));
+    if(i<parts.length-1) node.appendChild(el("span","blank","?"));
+  });
+}
+function renderQuestion(){
+  var q=QUESTIONS[state.idx], res=state.results[state.idx];
+  var needs=q.correctAnswer===null;
+  locked=!!res;
+  $("qType").textContent=(q.image?"🖼️ Picture Quiz":TYPE_LABEL[q.type]||"Question");
+  $("qSource").textContent="PDF "+q.source.replace(" (PDF)","");
+  fillText($("qText"),q.question);
+  var pic=$("qPic");
+  if(q.image){pic.textContent=q.image;pic.classList.remove("hidden");}else{pic.textContent="";pic.classList.add("hidden");}
+  var notice=$("qNotice");
+  if(needs){notice.textContent="⚠️ Câu này cần dữ liệu (đoạn nghe/tranh/bài đọc) không có trong đề PDF nên chưa chấm điểm. Em bấm NEXT để sang câu sau; giáo viên sẽ kiểm tra giúp nhé!";notice.classList.remove("hidden");}
+  else notice.classList.add("hidden");
+
+  var box=$("qOptions"); box.textContent="";
+  q.options.forEach(function(opt,i){
+    var b=el("button","opt");
+    b.type="button";
+    b.setAttribute("data-i",i);
+    b.appendChild(el("span","let",LETTERS[i]));
+    b.appendChild(el("span","txt",opt));
+    if(needs){b.disabled=true;b.classList.add("dim");}
+    else b.addEventListener("click",function(){choose(i);});
+    box.appendChild(b);
+  });
+
+  $("qFeedback").classList.add("hidden");
+  $("qFeedback").className="feedback hidden";
+  $("btnNext").classList.add("hidden");
+  $("btnSkip").classList.toggle("hidden",needs||!!res);
+  $("btnNext").textContent=(state.idx===TOTAL-1)?"FINISH 🏁":"NEXT QUESTION ➜";
+
+  // quick timer
+  var useTimer=state.quick&&!needs&&!res&&QUICK_TYPES[q.type];
+  quickLeft=useTimer?QUICK_SECONDS:0;
+  $("qTimer").classList.toggle("hidden",!useTimer);
+  if(useTimer)$("qTimer").textContent="⏱ "+quickLeft;
+
+  if(needs){ $("btnNext").classList.remove("hidden"); }
+  if(res&&!needs){ showAnswered(res.chosen,res.status); }
+  updateHud();
+}
+
+/* ---------- answering ---------- */
+function showAnswered(chosenIdx,status){
+  var q=QUESTIONS[state.idx];
+  var correctIdx=q.options.indexOf(q.correctAnswer);
+  var btns=$("qOptions").querySelectorAll(".opt");
+  btns.forEach(function(b,i){
+    b.disabled=true;
+    var old=b.querySelector(".mark"); if(old)old.remove();
+    if(i===correctIdx){b.classList.add("correct");b.appendChild(el("span","mark","✓"));}
+    else if(i===chosenIdx){b.classList.add("wrong");b.appendChild(el("span","mark","✗"));}
+    else b.classList.add("dim");
+  });
+  var fb=$("qFeedback"); fb.textContent="";
+  if(status==="correct"){
+    fb.className="feedback ok";
+    fb.appendChild(el("h3",null,"✓ Excellent! Correct answer!"));
+  }else if(status==="wrong"){
+    fb.className="feedback bad";
+    fb.appendChild(el("h3",null,"✗ Good try! Let's learn together!"));
+    fb.appendChild(el("div",null,"Correct answer: "+q.correctAnswer));
+  }else{
+    fb.className="feedback info";
+    fb.appendChild(el("h3",null,"⏰ Time's up!"));
+    fb.appendChild(el("div",null,"Correct answer: "+q.correctAnswer));
+  }
+  fb.appendChild(el("div",null,"💡 "+q.explanation));
+  $("qTimer").classList.add("hidden");
+  $("btnSkip").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+}
+
+function choose(i){
+  if(locked||paused) return;
+  var q=QUESTIONS[state.idx];
+  if(q.correctAnswer===null||state.results[state.idx]) return;
+  locked=true;
+  var ok=(q.options[i]===q.correctAnswer);
+  state.results[state.idx]={status:ok?"correct":"wrong",chosen:i};
+  var before=state.score;
+  if(ok) state.score+=POINTS;
+  saveState();
+  showAnswered(i,state.results[state.idx].status);
+  updateHud();
+  if(ok){ burst(); checkAchievements(before,state.score); }
+}
+
+function timeUp(){
+  if(locked) return;
+  var q=QUESTIONS[state.idx];
+  if(q.correctAnswer===null||state.results[state.idx]) return;
+  locked=true;
+  state.results[state.idx]={status:"skipped",chosen:null};
+  saveState();
+  showAnswered(null,"skipped");
+  updateHud();
+}
+
+function skipQuestion(){
+  if(locked||paused) return;
+  var q=QUESTIONS[state.idx];
+  if(q.correctAnswer===null||state.results[state.idx]) return;
+  locked=true;
+  state.results[state.idx]={status:"skipped",chosen:null};
+  saveState();
+  goNext();
+}
+
+function goNext(){
+  if(paused) return;
+  var res=state.results[state.idx];
+  if(!res){ // câu chưa có dữ liệu: ghi nhận "pending"
+    if(QUESTIONS[state.idx].correctAnswer===null) state.results[state.idx]={status:"pending",chosen:null};
+    else return; // chưa trả lời -> không cho qua
+  }
+  if(state.idx>=TOTAL-1){ finishGame(); return; }
+  state.idx++;
+  saveState();
+  renderQuestion();
+  window.scrollTo(0,0);
+}
+
+/* ---------- effects ---------- */
+function burst(){
+  if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var icons=["⭐","🌟","✨","🎉"];
+  for(var i=0;i<14;i++){
+    var s=el("span","confetti",icons[i%icons.length]);
+    s.style.left=(Math.random()*95)+"vw";
+    s.style.animationDelay=(Math.random()*0.3)+"s";
+    document.body.appendChild(s);
+    (function(n){setTimeout(function(){n.remove();},1900);})(s);
+  }
+}
+function toast(msg){
+  var t=el("div","toast",msg);t.setAttribute("role","status");
+  document.body.appendChild(t);
+  setTimeout(function(){t.remove();},2800);
+}
+function achieved(score){return ACHIEVEMENTS.filter(function(a){return MAX_SCORE>0&&score>=a.pct*MAX_SCORE;});}
+function checkAchievements(before,after){
+  var b=achieved(before).length, a=achieved(after);
+  if(a.length>b){var n=a[a.length-1];toast(n.icon+" New badge: "+n.name+"!");}
+}
+
+/* ---------- timer ---------- */
+function tick(){
+  var now=Date.now(), dt=now-lastTick; lastTick=now;
+  if(!state||paused||$("screen-quiz").classList.contains("hidden")) return;
+  state.elapsed+=dt;
+  if(!locked&&quickLeft>0){
+    quickLeft-=dt/1000;
+    var shown=Math.max(0,Math.ceil(quickLeft));
+    $("qTimer").textContent="⏱ "+shown;
+    if(quickLeft<=0){quickLeft=0;timeUp();}
+  }
+}
+setInterval(tick,250);
+function fmtTime(ms){
+  var s=Math.round(ms/1000),m=Math.floor(s/60);s=s%60;
+  return m+" min "+(s<10?"0":"")+s+" s";
+}
+
+/* ---------- finish / results ---------- */
+function ratingFor(pct){
+  if(pct>=90)return"Outstanding! 🌟";
+  if(pct>=80)return"Excellent! 🎉";
+  if(pct>=65)return"Good job! 👍";
+  if(pct>=50)return"Keep practising! 💪";
+  return"Every mistake helps you learn! 🌱";
+}
+function finishGame(){
+  clearSave();
+  var c=counts();
+  var pct=SCORABLE.length?Math.round(c.correct/SCORABLE.length*1000)/10:0;
+  $("rName").textContent=state.name?("Well done, "+state.name+"!"):"";
+  $("rMsg").textContent=ratingFor(pct);
+  var g=$("rGrid"); g.textContent="";
+  [["Questions done",c.done+"/"+TOTAL],["Correct ✓",c.correct],["Wrong ✗",c.wrong],["Skipped",c.skipped],
+   ["Need teacher data",c.pending],["Score",state.score+"/"+MAX_SCORE],["Accuracy",pct+"%"],["Time",fmtTime(state.elapsed)]
+  ].forEach(function(p){var d=el("div");d.appendChild(el("b",null,String(p[1])));d.appendChild(document.createTextNode(p[0]));g.appendChild(d);});
+  var bw=$("rBadges"); bw.textContent="";
+  var got=achieved(state.score).map(function(a){return a.name;});
+  ACHIEVEMENTS.forEach(function(a){
+    var d=el("div","bdg"+(got.indexOf(a.name)<0?" locked":""));
+    d.appendChild(el("div",null,a.icon));
+    d.appendChild(el("div",null,a.name));
+    d.appendChild(el("small",null,"≥ "+Math.ceil(a.pct*MAX_SCORE)+" pts"));
+    bw.appendChild(d);
+  });
+  $("rNote").textContent=c.pending?
+    ("Lưu ý: "+c.pending+" câu chưa có đủ dữ liệu (đoạn nghe/tranh/bài đọc) nên không tính điểm. Điểm tối đa là "+MAX_SCORE+" thay vì 1000; xếp loại tính trên "+SCORABLE.length+" câu có đáp án."):"";
+  showScreen("result");
+  if(pct>=50)burst();
+}
+
+/* ---------- review ---------- */
+function renderReview(){
+  var list=$("reviewList"); list.textContent="";
+  var shown=0;
+  state.results.forEach(function(r,i){
+    if(!r) return;
+    if(reviewFilter!=="all"&&r.status!==reviewFilter) return;
+    var q=QUESTIONS[i]; shown++;
+    var item=el("div","ritem st-"+r.status);
+    var head=el("div");
+    head.appendChild(el("span","tag "+r.status,{correct:"Correct",wrong:"Wrong",skipped:"Skipped",pending:"Need data"}[r.status]));
+    head.appendChild(document.createTextNode(q.source));
+    item.appendChild(head);
+    var qt=el("div","qt"); qt.textContent=q.question; item.appendChild(qt);
+    var chosen=(r.chosen===null||r.chosen===undefined)?"(no answer)":LETTERS[r.chosen]+". "+q.options[r.chosen];
+    if(r.status!=="pending"){
+      item.appendChild(el("div",null,"Your answer: "+chosen));
+      item.appendChild(el("div",null,"Correct answer: "+q.correctAnswer));
+    }else{
+      item.appendChild(el("div",null,"Options: "+q.options.map(function(o,k){return LETTERS[k]+". "+o;}).join("  |  ")));
+    }
+    item.appendChild(el("div","small-note","💡 "+q.explanation));
+    if(q.teacherNote)item.appendChild(el("div","small-note","👩‍🏫 "+q.teacherNote));
+    list.appendChild(item);
+  });
+  if(!shown)list.appendChild(el("p","msg","Nothing here – great! 🎉"));
+  document.querySelectorAll("#filters .btn").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-f")===reviewFilter);});
+}
+
+/* ---------- teacher list ---------- */
+function renderTeacher(){
+  var list=$("teacherList"); list.textContent="";
+  var noted=QUESTIONS.filter(function(q){return q.teacherNote||q.correctAnswer===null;});
+  var needs=noted.filter(function(q){return q.correctAnswer===null;}).length;
+  list.appendChild(el("p","msg",needs+" câu chưa chấm điểm • "+(noted.length-needs)+" câu có ghi chú • Điểm tối đa hiện tại: "+MAX_SCORE));
+  noted.forEach(function(q){
+    var it=el("div","ritem "+(q.correctAnswer===null?"st-skipped":"st-pending"));
+    var h=el("div");
+    h.appendChild(el("span","tag "+(q.correctAnswer===null?"skipped":"pending"),q.correctAnswer===null?"Chưa chấm":"Ghi chú"));
+    h.appendChild(document.createTextNode(q.source));
+    it.appendChild(h);
+    it.appendChild(el("div","qt",q.question));
+    it.appendChild(el("div",null,"Options: "+q.options.map(function(o,k){return LETTERS[k]+". "+o;}).join("  |  ")));
+    if(q.correctAnswer!==null)it.appendChild(el("div",null,"Đáp án đang dùng: "+q.correctAnswer));
+    it.appendChild(el("div","small-note","👩‍🏫 "+q.teacherNote));
+    list.appendChild(it);
+  });
+}
+
+/* ---------- confirm dialog ---------- */
+var confirmCb=null;
+function askConfirm(title,text,cb){
+  $("cTitle").textContent=title;$("cText").textContent=text;confirmCb=cb;
+  $("confirmOverlay").classList.remove("hidden");$("cNo").focus();
+}
+$("cYes").addEventListener("click",function(){$("confirmOverlay").classList.add("hidden");var cb=confirmCb;confirmCb=null;if(cb)cb();});
+$("cNo").addEventListener("click",function(){$("confirmOverlay").classList.add("hidden");confirmCb=null;});
+
+/* ---------- start screen ---------- */
+function refreshStart(){
+  var s=loadState();
+  $("btnContinue").classList.toggle("hidden",!s);
+  $("startInfo").textContent=s?("Đã lưu tiến trình: câu "+(s.idx+1)+"/"+TOTAL+(s.name?(" – "+s.name):"")+"."):"";
+  $("hScore").textContent="0/"+MAX_SCORE;
+}
+function startNew(){
+  state=newState($("nameInput").value.trim(),$("quickToggle").checked);
+  clearSave();saveState();
+  paused=false;lastTick=Date.now();
+  showScreen("quiz");renderQuestion();
+}
+$("btnStart").addEventListener("click",function(){
+  if(loadState()){
+    askConfirm("Start a new game?","Đã có tiến trình đang lưu. Bắt đầu mới sẽ xóa tiến trình cũ.",startNew);
+  }else startNew();
+});
+$("btnContinue").addEventListener("click",function(){
+  var s=loadState(); if(!s) return;
+  state=s;paused=false;lastTick=Date.now();
+  showScreen("quiz");renderQuestion();
+});
+$("btnTeacher").addEventListener("click",function(){renderTeacher();showScreen("teacher");});
+$("btnTeacherBack").addEventListener("click",function(){refreshStart();showScreen("start");});
+
+/* ---------- quiz controls ---------- */
+$("btnNext").addEventListener("click",goNext);
+$("btnSkip").addEventListener("click",skipQuestion);
+$("btnHome").addEventListener("click",function(){
+  askConfirm("Back to home?","Tiến trình sẽ được lưu. Em có thể bấm CONTINUE để chơi tiếp.",function(){
+    saveState();refreshStart();showScreen("start");
+  });
+});
+$("btnPause").addEventListener("click",function(){paused=true;$("pauseOverlay").classList.remove("hidden");$("btnResume").focus();});
+$("btnResume").addEventListener("click",function(){paused=false;lastTick=Date.now();$("pauseOverlay").classList.add("hidden");});
+
+/* ---------- results controls ---------- */
+$("btnReview").addEventListener("click",function(){reviewFilter="all";renderReview();showScreen("review");});
+$("btnReviewBack").addEventListener("click",function(){showScreen("result");});
+$("filters").addEventListener("click",function(e){
+  var b=e.target.closest("button[data-f]");if(!b)return;
+  reviewFilter=b.getAttribute("data-f");renderReview();
+});
+$("btnAgain").addEventListener("click",function(){
+  var name=state?state.name:"",quick=state?state.quick:false;
+  state=newState(name,quick);clearSave();saveState();
+  paused=false;lastTick=Date.now();showScreen("quiz");renderQuestion();
+});
+$("btnRestart").addEventListener("click",function(){
+  askConfirm("Restart quiz?","Toàn bộ điểm và tiến trình sẽ bị xóa và quay về màn hình đầu.",function(){
+    clearSave();state=null;$("nameInput").value="";refreshStart();showScreen("start");
+  });
+});
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown",function(e){
+  if(!state||$("screen-quiz").classList.contains("hidden")||paused) return;
+  if(!$("confirmOverlay").classList.contains("hidden")) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  var k=e.key.toLowerCase(),map={a:0,b:1,c:2,d:3,"1":0,"2":1,"3":2,"4":3};
+  if(map.hasOwnProperty(k)){
+    var q=QUESTIONS[state.idx];
+    if(map[k]<q.options.length) choose(map[k]);
+  }else if(k==="n"||k==="arrowright"){
+    if(!$("btnNext").classList.contains("hidden")) goNext();
+  }
+});
+
+/* ---------- init ---------- */
+refreshStart();
+})();
+</script>
+</body>
+</html>
